@@ -1,0 +1,17 @@
+{
+  "name": "@paperandom/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "serve": "python -m http.server 5173"
+  },
+  "dependencies": {
+    "@paperandom/shared": "1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "skipLibCheck": true,
+    "types": ["node"],
+    "composite": true,
+    "paths": {
+      "@paperandom/shared": ["../../packages/shared/src/index.ts"],
+      "@paperandom/shared/seed": ["../../packages/shared/src/data/seed.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "prisma/**/*.ts"],
+  "references": [{ "path": "../../packages/shared" }]
+}

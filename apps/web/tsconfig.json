@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "skipLibCheck": true,
+    "composite": true,
+    "paths": {
+      "@paperandom/shared": ["../../packages/shared/src/index.ts"],
+      "@paperandom/shared/seed": ["../../packages/shared/src/data/seed.ts"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "references": [{ "path": "../../packages/shared" }]
+}

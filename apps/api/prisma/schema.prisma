@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENTE
+}
+
+enum ServiceStatus {
+  ACTIVO
+  INACTIVO
+}
+
+enum RequestStatus {
+  PENDIENTE
+  EN_PROCESO
+  COMPLETADO
+  CANCELADO
+}
+
+model User {
+  id           String           @id @default(cuid())
+  name         String
+  email        String           @unique
+  passwordHash String
+  role         UserRole         @default(CLIENTE)
+  requests     TramiteRequest[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("users")
+}
+
+model Service {
+  id             String           @id @default(cuid())
+  name           String
+  code           String           @unique
+  category       String
+  documentKind   String
+  cost           Decimal          @db.Decimal(10, 2)
+  fee            Decimal          @db.Decimal(10, 2)
+  status         ServiceStatus    @default(ACTIVO)
+  description    String
+  requiredFields Json
+  requirements   String[]
+  sampleFiles    String[]
+  requests       TramiteRequest[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@map("services")
+}
+
+model TramiteRequest {
+  id           String        @id @default(cuid())
+  userId       String
+  serviceId    String
+  customerName String
+  document     String
+  state        String
+  status       RequestStatus @default(PENDIENTE)
+  total        Decimal       @db.Decimal(10, 2)
+  notes        String        @default("")
+  details      Json
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service      Service       @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([serviceId])
+  @@map("tramite_requests")
+}
+
+model PaymentSettings {
+  id           String   @id @default("default")
+  account      String
+  reference    String
+  instructions String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("payment_settings")
+}

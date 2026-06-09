@@ -1,0 +1,36 @@
+{
+  "name": "paperandom-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @paperandom/shared && npm run build -w @paperandom/web && npm run build -w @paperandom/api",
+    "build:web": "npm run build -w @paperandom/web",
+    "build:api": "npm run build -w @paperandom/api",
+    "dev:web": "npm run dev -w @paperandom/web",
+    "dev:api": "npm run dev -w @paperandom/api",
+    "start:api": "npm run start -w @paperandom/api",
+    "prisma:generate": "npm run prisma:generate -w @paperandom/api",
+    "prisma:migrate": "npm run prisma:migrate -w @paperandom/api",
+    "prisma:migrate:deploy": "npm run prisma:migrate:deploy -w @paperandom/api",
+    "prisma:push": "npm run prisma:push -w @paperandom/api",
+    "prisma:studio": "npm run prisma:studio -w @paperandom/api",
+    "db:seed": "npm run db:seed -w @paperandom/api"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "prisma": "^6.19.3",
+    "tsx": "^4.22.4",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@prisma/client": "^6.19.3",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.8.5",
+    "zod": "^4.4.3"
+  }
+}

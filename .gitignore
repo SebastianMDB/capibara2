@@ -1,0 +1,9 @@
+node_modules/
+dist/
+server-dist/
+apps/*/dist/
+packages/*/dist/
+*.tsbuildinfo
+.env
+apps/api/.env
+.codex_tmp/
