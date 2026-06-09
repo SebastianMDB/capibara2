@@ -7,9 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w @paperandom/shared && npm run build -w @paperandom/web && npm run build -w @paperandom/api",
+    "build": "npm run build -w @paperandom/shared && npm run build -w @paperandom/web && npm run prisma:generate -w @paperandom/api && npm run build -w @paperandom/api",
     "build:web": "npm run build -w @paperandom/web",
-    "build:api": "npm run build -w @paperandom/api",
+    "build:api": "npm run prisma:generate -w @paperandom/api && npm run build -w @paperandom/api",
+    "start": "npm run prisma:migrate:deploy && npm run start:api",
     "dev:web": "npm run dev -w @paperandom/web",
     "dev:api": "npm run dev -w @paperandom/api",
     "start:api": "npm run start -w @paperandom/api",

@@ -20,7 +20,7 @@ import {
 } from "./validators.js";
 
 const app = Fastify({ logger: true });
-const port = Number(process.env.API_PORT ?? 3000);
+const port = Number(process.env.PORT ?? process.env.API_PORT ?? 3000);
 
 await app.register(cors, {
   origin: process.env.CLIENT_ORIGIN ?? true
