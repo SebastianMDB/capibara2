@@ -1,8 +1,11 @@
 import "dotenv/config";
 import cors from "@fastify/cors";
-import Fastify from "fastify";
+import Fastify, { type FastifyReply } from "fastify";
 import type { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
+import { createReadStream } from "node:fs";
+import { access } from "node:fs/promises";
+import { extname, join, normalize, resolve } from "node:path";
 import { prisma, closeDb } from "./db.js";
 import { createToken, requireAdmin, requireAuth } from "./security/auth.js";
 import { hashPassword, verifyPassword } from "./security/password.js";
@@ -27,6 +30,37 @@ await app.register(cors, {
 });
 
 app.get("/health", async () => ({ ok: true }));
+
+const webRoot = resolve(process.cwd(), "../web");
+const mimeTypes: Record<string, string> = {
+  ".css": "text/css; charset=utf-8",
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml"
+};
+
+async function sendWebFile(reply: FastifyReply, requestedPath: string) {
+  const safePath = normalize(requestedPath).replace(/^(\.\.[/\\])+/, "");
+  const filePath = resolve(join(webRoot, safePath));
+  if (!filePath.startsWith(webRoot)) {
+    return reply.code(404).send({ message: "Not found" });
+  }
+
+  try {
+    await access(filePath);
+    return reply.type(mimeTypes[extname(filePath)] ?? "application/octet-stream").send(createReadStream(filePath));
+  } catch {
+    return reply.code(404).send({ message: "Not found" });
+  }
+}
+
+app.get("/", async (_request, reply) => sendWebFile(reply, "index.html"));
+
+app.get("/*", async (request, reply) => {
+  const params = request.params as { "*": string };
+  return sendWebFile(reply, params["*"]);
+});
 
 app.setErrorHandler((error, _request, reply) => {
   if (error instanceof ZodError) {

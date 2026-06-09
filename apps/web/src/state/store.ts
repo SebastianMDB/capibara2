@@ -1,9 +1,12 @@
 import type { AppState, PaymentSettings, RequestStatus, Service, TramiteRequest, User, UserRole } from "@paperandom/shared";
 
 const runtimeConfig = window as Window & { PAPERANDOM_API_URL?: string };
+const defaultApiUrl = window.location.hostname === "localhost" && window.location.port === "5173"
+  ? "http://localhost:3000"
+  : window.location.origin;
 const API_BASE_URL = runtimeConfig.PAPERANDOM_API_URL
   ?? window.localStorage.getItem("paperandom-api-url")
-  ?? "http://localhost:3000";
+  ?? defaultApiUrl;
 const TOKEN_KEY = "paperandom-auth-token";
 
 type LoginResponse = {
