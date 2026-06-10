@@ -197,13 +197,12 @@ function templateUrl(file: string): string {
 }
 
 function requestFields(service: Service): ServiceField[] {
-  if (service.code !== "antecedentes-chiapas") return service.requiredFields;
-  if (service.requiredFields.some((field) => field.name === "photo")) return service.requiredFields;
+  const preset = serviceFieldPreset(service.code);
+  if (!preset.length) return service.requiredFields;
+  if (service.code === "antecedentes-chiapas") return preset;
 
-  return [
-    ...service.requiredFields,
-    { name: "photo", label: "Foto del cliente", type: "file", required: true, accept: "image/png,image/jpeg" }
-  ];
+  const existing = new Set(service.requiredFields.map((field) => field.name));
+  return [...service.requiredFields, ...preset.filter((field) => !existing.has(field.name))];
 }
 
 function detailRow(key: string, value: string, details: Record<string, string>): string {
@@ -241,4 +240,43 @@ function formatServiceFields(fields: ServiceField[] | undefined): string {
       field.accept ?? ""
     ].join("|"))
     .join("\n");
+}
+
+function serviceFieldPreset(code: string): ServiceField[] {
+  if (code === "antecedentes-chiapas") {
+    return [
+      { name: "firstName", label: "Nombre(s)", type: "text", required: true, placeholder: "Nombre(s)" },
+      { name: "paternalLastName", label: "Apellido paterno", type: "text", required: true, placeholder: "Apellido paterno" },
+      { name: "maternalLastName", label: "Apellido materno", type: "text", required: false, placeholder: "Apellido materno" },
+      { name: "birthDate", label: "Fecha de nacimiento", type: "date", required: true },
+      { name: "curp", label: "CURP", type: "text", required: true, placeholder: "AAAA000000HAAAAA00" },
+      { name: "voterKey", label: "Clave de elector", type: "text", required: false, placeholder: "Clave de elector" },
+      { name: "address", label: "Domicilio", type: "textarea", required: false, placeholder: "Domicilio completo" },
+      { name: "state", label: "Estado", type: "select", required: true, options: ["Chiapas", "Sonora", "Ciudad de Mexico", "Jalisco", "Otro"] },
+      { name: "office", label: "Oficina", type: "text", required: false, placeholder: "01" },
+      { name: "receipt", label: "Recibo oficial", type: "text", required: false, placeholder: "Numero de recibo" },
+      { name: "photo", label: "Foto del cliente", type: "file", required: true, accept: "image/png,image/jpeg" }
+    ];
+  }
+
+  if (code === "receta-imss") {
+    return [
+      { name: "sex", label: "Sexo", type: "select", required: true, options: ["Femenino", "Masculino"] },
+      { name: "shift", label: "Turno", type: "select", required: true, options: ["Matutino", "Vespertino", "Nocturno"] },
+      { name: "delegation", label: "Delegacion", type: "text", required: true, placeholder: "Delegacion IMSS" },
+      { name: "consultingRoom", label: "Consultorio", type: "text", required: true, placeholder: "Consultorio" },
+      { name: "issueDate", label: "Fecha de emision", type: "date", required: true },
+      { name: "prescriptionType", label: "Tipo de receta", type: "select", required: false, options: ["Ordinaria", "Controlada", "Resurtible"] }
+    ];
+  }
+
+  if (code.includes("prepa") || code.includes("bachillerato") || code.includes("secundaria")) {
+    return [
+      { name: "startDate", label: "Fecha de inicio", type: "date", required: false },
+      { name: "endDate", label: "Fecha de termino", type: "date", required: false },
+      { name: "level", label: "Nivel", type: "select", required: false, options: ["Secundaria", "Bachillerato", "Preparatoria"] }
+    ];
+  }
+
+  return [];
 }

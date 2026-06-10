@@ -34,7 +34,14 @@ export const seedState: AppState = {
       fee: 15,
       description: "Constancia emitida por el Poder Judicial con vigencia, folio, recibo oficial y validación QR.",
       requiredFields: [
-        ...identityFields,
+        { name: "firstName", label: "Nombre(s)", type: "text", required: true, placeholder: "Nombre(s)" },
+        { name: "paternalLastName", label: "Apellido paterno", type: "text", required: true, placeholder: "Apellido paterno" },
+        { name: "maternalLastName", label: "Apellido materno", type: "text", required: false, placeholder: "Apellido materno" },
+        { name: "birthDate", label: "Fecha de nacimiento", type: "date", required: true },
+        { name: "curp", label: "CURP", type: "text", required: true, placeholder: "AAAA000000HAAAAA00" },
+        { name: "voterKey", label: "Clave de elector", type: "text", required: false, placeholder: "Clave de elector" },
+        { name: "address", label: "Domicilio", type: "textarea", required: false, placeholder: "Domicilio completo" },
+        { name: "state", label: "Estado", type: "select", required: true, options: ["Chiapas", "Sonora", "Ciudad de México", "Jalisco", "Otro"] },
         { name: "photo", label: "Foto del cliente", type: "file", required: true, accept: "image/png,image/jpeg" },
         { name: "office", label: "Oficina", type: "text", required: false, placeholder: "01" },
         { name: "receipt", label: "Recibo oficial", type: "text", required: false, placeholder: "Número de recibo" }
@@ -53,6 +60,8 @@ export const seedState: AppState = {
       description: "Certificado digital del INEA con autoridad educativa, sello SEP, promedio, CCT y folio.",
       requiredFields: [
         ...educationFields,
+        { name: "startDate", label: "Fecha de inicio", type: "date", required: false },
+        { name: "endDate", label: "Fecha de termino", type: "date", required: false },
         { name: "folio", label: "Folio", type: "text", required: false, placeholder: "Folio digital si ya existe" }
       ],
       requirements: ["CURP", "Nombre completo", "Entidad", "Datos de escuela o unidad INEA"],
@@ -69,6 +78,9 @@ export const seedState: AppState = {
       description: "Certificado con carrera técnica, créditos, autoridad educativa, sello digital SEP, timbrado y folio.",
       requiredFields: [
         ...educationFields,
+        { name: "startDate", label: "Fecha de inicio", type: "date", required: false },
+        { name: "endDate", label: "Fecha de termino", type: "date", required: false },
+        { name: "level", label: "Nivel", type: "select", required: false, options: ["Secundaria", "Bachillerato", "Preparatoria"] },
         { name: "career", label: "Carrera técnica", type: "text", required: true, placeholder: "Administración" },
         { name: "credits", label: "Créditos", type: "number", required: false, placeholder: "360" }
       ],
@@ -86,6 +98,9 @@ export const seedState: AppState = {
       description: "Certificado de educación virtual con módulos acreditados, matrícula, créditos, firma electrónica y QR.",
       requiredFields: [
         ...educationFields,
+        { name: "startDate", label: "Fecha de inicio", type: "date", required: false },
+        { name: "endDate", label: "Fecha de termino", type: "date", required: false },
+        { name: "level", label: "Nivel", type: "select", required: false, options: ["Secundaria", "Bachillerato", "Preparatoria"] },
         { name: "enrollment", label: "Matrícula", type: "text", required: true, placeholder: "E0000X00000" },
         { name: "modules", label: "Módulos acreditados", type: "textarea", required: false, placeholder: "Lista de módulos o comentarios" }
       ],
@@ -103,6 +118,9 @@ export const seedState: AppState = {
       description: "Certificado de bachillerato general con formación laboral, folio digital, QR y firma electrónica.",
       requiredFields: [
         ...educationFields,
+        { name: "startDate", label: "Fecha de inicio", type: "date", required: false },
+        { name: "endDate", label: "Fecha de termino", type: "date", required: false },
+        { name: "level", label: "Nivel", type: "select", required: false, options: ["Secundaria", "Bachillerato", "Preparatoria"] },
         { name: "creditsTotal", label: "Créditos totales", type: "number", required: false, placeholder: "276" },
         { name: "printPlace", label: "Lugar de impresión", type: "text", required: false, placeholder: "Benito Juárez, Ciudad de México" }
       ],
@@ -121,7 +139,13 @@ export const seedState: AppState = {
       requiredFields: [
         ...identityFields,
         { name: "nss", label: "NSS", type: "text", required: true, placeholder: "Número de Seguridad Social" },
+        { name: "sex", label: "Sexo", type: "select", required: true, options: ["Femenino", "Masculino"] },
+        { name: "shift", label: "Turno", type: "select", required: true, options: ["Matutino", "Vespertino", "Nocturno"] },
+        { name: "delegation", label: "Delegación", type: "text", required: true, placeholder: "Delegación IMSS" },
         { name: "clinic", label: "Unidad / Clínica", type: "text", required: true, placeholder: "Clínica 27" },
+        { name: "consultingRoom", label: "Consultorio", type: "text", required: true, placeholder: "Consultorio" },
+        { name: "issueDate", label: "Fecha de emisión", type: "date", required: true },
+        { name: "prescriptionType", label: "Tipo de receta", type: "select", required: false, options: ["Ordinaria", "Controlada", "Resurtible"] },
         { name: "diagnosis", label: "Diagnóstico", type: "textarea", required: true, placeholder: "Motivo de atención" },
         { name: "medicines", label: "Medicamentos", type: "textarea", required: true, placeholder: "Medicamento, dosis, frecuencia y duración" }
       ],

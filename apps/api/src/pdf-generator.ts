@@ -19,10 +19,55 @@ export async function generateRequestPdf(request: RequestWithService): Promise<U
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
   const page = pdf.getPage(0);
 
-  await drawByService(pdf, page, font, bold, request);
+  await drawByServiceV2(pdf, page, font, bold, request);
   addRequestSummary(page, font, bold, request);
 
   return pdf.save();
+}
+
+async function drawByServiceV2(pdf: PDFDocument, page: PDFPage, font: PDFFont, bold: PDFFont, request: RequestWithService): Promise<void> {
+  const values = requestValues(request);
+  const fullName = fullCustomerName(request, values);
+
+  if (request.service.code === "antecedentes-chiapas") {
+    drawText(page, fullName, 195, 456, bold, 11);
+    drawText(page, request.document, 390, 428, font, 9);
+    drawText(page, values.birthDate, 130, 428, font, 9);
+    drawText(page, request.state || values.state, 130, 384, font, 10);
+    drawText(page, values.office, 420, 384, font, 10);
+    drawText(page, values.voterKey, 130, 356, font, 8);
+    drawWrappedText(page, values.address, 130, 332, 300, font, 8, 10, 3);
+    drawText(page, values.receipt, 165, 156, font, 9);
+    await drawImage(page, pdf, values.photo, 455, 500, 82, 102);
+    return;
+  }
+
+  if (request.service.code.includes("receta")) {
+    drawText(page, fullName, 122, 612, bold, 10);
+    drawText(page, request.document, 122, 594, font, 9);
+    drawText(page, values.nss, 122, 576, font, 9);
+    drawText(page, values.clinic, 356, 612, font, 9);
+    drawText(page, values.sex, 122, 558, font, 9);
+    drawText(page, values.shift, 356, 594, font, 9);
+    drawText(page, values.delegation, 356, 576, font, 9);
+    drawText(page, values.consultingRoom, 356, 558, font, 9);
+    drawText(page, values.issueDate, 122, 540, font, 9);
+    drawText(page, values.prescriptionType, 356, 540, font, 9);
+    drawWrappedText(page, values.diagnosis, 108, 475, 360, font, 9, 12);
+    drawWrappedText(page, values.medicines, 108, 345, 380, font, 9, 12);
+    return;
+  }
+
+  if (isEducationService(request.service)) {
+    drawText(page, fullName, 156, 492, bold, 11);
+    drawText(page, request.document, 156, 468, font, 9);
+    drawText(page, request.state || values.state, 156, 444, font, 9);
+    drawText(page, values.institution, 156, 420, font, 9);
+    drawText(page, values.cct, 156, 396, font, 9);
+    drawText(page, values.average, 402, 396, bold, 10);
+    drawText(page, values.period || dateRange(values.startDate, values.endDate), 156, 372, font, 9);
+    drawText(page, values.level, 402, 372, font, 9);
+  }
 }
 
 async function drawByService(pdf: PDFDocument, page: PDFPage, font: PDFFont, bold: PDFFont, request: RequestWithService): Promise<void> {
@@ -112,6 +157,19 @@ function requestValues(request: RequestWithService): Record<string, string> {
     values[item.label] = item.value;
     return values;
   }, {});
+}
+
+function fullCustomerName(request: RequestWithService, values: Record<string, string>): string {
+  return values.fullName || [values.firstName, values.paternalLastName, values.maternalLastName].filter(Boolean).join(" ") || request.customerName;
+}
+
+function dateRange(startDate: string | undefined, endDate: string | undefined): string {
+  return [startDate, endDate].filter(Boolean).join(" al ");
+}
+
+function isEducationService(service: Service): boolean {
+  const text = `${service.category} ${service.code}`.toLowerCase();
+  return text.includes("educ") || text.includes("prepa") || text.includes("bachillerato") || text.includes("secundaria");
 }
 
 function requestDetails(request: RequestWithService): PdfValue[] {

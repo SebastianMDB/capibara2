@@ -183,7 +183,7 @@ export class AppController {
 
     try {
       const details = await this.extractDetails(data);
-      const customerName = String(data.customerName ?? details.fullName ?? this.session?.name ?? "");
+      const customerName = String(data.customerName ?? this.customerName(details) ?? this.session?.name ?? "");
       const document = String(data.document ?? details.curp ?? details.rfc ?? "");
 
       await this.store.createRequest({
@@ -296,6 +296,11 @@ export class AppController {
 
   private findService(id: string): Service | undefined {
     return this.store.snapshot.services.find((service) => service.id === id);
+  }
+
+  private customerName(details: Record<string, string>): string {
+    const composed = [details.firstName, details.paternalLastName, details.maternalLastName].filter(Boolean).join(" ");
+    return details.fullName || composed;
   }
 
   private documentFilename(request: import("@paperandom/shared").TramiteRequest | undefined, id: string): string {
