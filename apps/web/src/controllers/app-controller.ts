@@ -216,21 +216,21 @@ export class AppController {
   }
 
   private async saveService(data: FormPayload, id?: string): Promise<void> {
-    const service: Omit<Service, "id"> = {
-      name: String(data.name ?? ""),
-      code: String(data.code ?? ""),
-      category: String(data.category ?? ""),
-      documentKind: String(data.documentKind ?? ""),
-      cost: Number(data.cost ?? 0),
-      fee: Number(data.fee ?? 0),
-      status: "activo",
-      description: String(data.description ?? ""),
-      requiredFields: this.defaultFields(),
-      requirements: this.lines(data.requirements),
-      sampleFiles: this.lines(data.sampleFiles)
-    };
-
     try {
+      const service: Omit<Service, "id"> = {
+        name: String(data.name ?? ""),
+        code: String(data.code ?? ""),
+        category: String(data.category ?? ""),
+        documentKind: String(data.documentKind ?? ""),
+        cost: Number(data.cost ?? 0),
+        fee: Number(data.fee ?? 0),
+        status: "activo",
+        description: String(data.description ?? ""),
+        requiredFields: this.serviceFields(data.requiredFields),
+        requirements: this.lines(data.requirements),
+        sampleFiles: this.lines(data.sampleFiles)
+      };
+
       await this.store.saveService(service, id || undefined);
       this.closeModal();
     } catch (error) {
@@ -339,11 +339,38 @@ export class AppController {
       .filter(Boolean);
   }
 
-  private defaultFields(): ServiceField[] {
-    return [
-      { name: "fullName", label: "Nombre completo", type: "text", required: true },
-      { name: "curp", label: "CURP", type: "text", required: true },
-      { name: "state", label: "Estado", type: "text", required: true }
-    ];
+  private serviceFields(value: FormDataEntryValue | undefined): ServiceField[] {
+    const lines = this.lines(value);
+    if (!lines.length) {
+      return [
+        { name: "fullName", label: "Nombre completo", type: "text", required: true },
+        { name: "curp", label: "CURP", type: "text", required: true },
+        { name: "state", label: "Estado", type: "text", required: true }
+      ];
+    }
+
+    return lines.map((line, index) => {
+      const [name, label, type = "text", required = "optional", placeholder = "", options = "", accept = ""] = line
+        .split("|")
+        .map((part) => part.trim());
+      const supportedTypes: ServiceField["type"][] = ["text", "date", "number", "select", "textarea", "file"];
+
+      if (!name || !label) {
+        throw new Error(`Campo ${index + 1}: usa nombre|Etiqueta|tipo|required.`);
+      }
+      if (!supportedTypes.includes(type as ServiceField["type"])) {
+        throw new Error(`Campo ${index + 1}: tipo invalido.`);
+      }
+
+      return {
+        name,
+        label,
+        type: type as ServiceField["type"],
+        required: required === "required" || required === "true" || required === "si",
+        ...(placeholder ? { placeholder } : {}),
+        ...(options ? { options: options.split(",").map((option) => option.trim()).filter(Boolean) } : {}),
+        ...(accept ? { accept } : {})
+      };
+    });
   }
 }

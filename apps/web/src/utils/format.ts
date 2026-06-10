@@ -1,9 +1,9 @@
 import type { RequestStatus } from "@paperandom/shared";
 
 export function money(value: number): string {
-  return new Intl.NumberFormat("es-CL", {
+  return new Intl.NumberFormat("es-MX", {
     style: "currency",
-    currency: "USD"
+    currency: "MXN"
   }).format(Number(value || 0));
 }
 

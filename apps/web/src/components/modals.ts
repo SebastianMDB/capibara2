@@ -55,6 +55,7 @@ function requestModal(service: Service, instructions: string, reference: string,
 function serviceModal(service?: Service): string {
   const requirements = service?.requirements.join("\n") ?? "";
   const samples = service?.sampleFiles.join("\n") ?? "";
+  const fields = formatServiceFields(service?.requiredFields);
 
   return `
     <div class="modal-backdrop">
@@ -76,6 +77,7 @@ function serviceModal(service?: Service): string {
           </div>
           <div class="field"><label>Descripcion</label><textarea name="description" rows="3" required>${service?.description ?? ""}</textarea></div>
           <div class="field"><label>Requisitos</label><textarea name="requirements" rows="4" placeholder="Un requisito por linea">${requirements}</textarea></div>
+          <div class="field"><label>Campos del formulario</label><textarea name="requiredFields" rows="6" placeholder="nombre|Etiqueta|tipo|required|placeholder|opcion1,opcion2|accept">${fields}</textarea></div>
           <div class="field"><label>PDF de referencia</label><textarea name="sampleFiles" rows="2" placeholder="Un archivo por linea">${samples}</textarea></div>
           <div class="toolbar">
             <button class="secondary" type="button" data-action="close-modal">Cancelar</button>
@@ -219,4 +221,24 @@ function detailRow(key: string, value: string, details: Record<string, string>):
   }
 
   return `<div><dt>${key}</dt><dd>${value}</dd></div>`;
+}
+
+function formatServiceFields(fields: ServiceField[] | undefined): string {
+  const source = fields?.length ? fields : [
+    { name: "fullName", label: "Nombre completo", type: "text", required: true },
+    { name: "curp", label: "CURP", type: "text", required: true },
+    { name: "state", label: "Estado", type: "text", required: true }
+  ] satisfies ServiceField[];
+
+  return source
+    .map((field) => [
+      field.name,
+      field.label,
+      field.type,
+      field.required ? "required" : "optional",
+      field.placeholder ?? "",
+      field.options?.join(",") ?? "",
+      field.accept ?? ""
+    ].join("|"))
+    .join("\n");
 }
