@@ -29,10 +29,11 @@ export interface Service {
 export interface ServiceField {
   name: string;
   label: string;
-  type: "text" | "date" | "number" | "select" | "textarea";
+  type: "text" | "date" | "number" | "select" | "textarea" | "file";
   required: boolean;
   placeholder?: string;
   options?: string[];
+  accept?: string;
 }
 
 export interface TramiteRequest {

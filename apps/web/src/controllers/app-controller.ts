@@ -123,9 +123,10 @@ export class AppController {
     if (action === "edit-service" && id) this.editService(id);
     if (action === "open-user") this.openUser();
     if (action === "open-request-view" && id) this.openRequestView(id);
+    if (action === "download-request-document" && id) void this.downloadRequestDocument(id);
   }
 
-  private handleSubmit(event: SubmitEvent): void {
+  private async handleSubmit(event: SubmitEvent): Promise<void> {
     event.preventDefault();
     const form = event.currentTarget;
     if (!(form instanceof HTMLFormElement)) return;
@@ -135,7 +136,7 @@ export class AppController {
     const data = Object.fromEntries(new FormData(form)) as FormPayload;
 
     if (action === "login") void this.login(data);
-    if (action === "create-request" && id) void this.createRequest(data, id);
+    if (action === "create-request" && id) await this.createRequest(data, id);
     if (action === "save-service") void this.saveService(data, id);
     if (action === "create-user") void this.createUser(data);
     if (action === "save-qr") void this.saveQr(data);
@@ -179,11 +180,12 @@ export class AppController {
     if (!this.session) return;
     const service = this.findService(serviceId);
     if (!service) return;
-    const details = this.extractDetails(data);
-    const customerName = String(data.customerName ?? details.fullName ?? this.session.name);
-    const document = String(data.document ?? details.curp ?? details.rfc ?? "");
 
     try {
+      const details = await this.extractDetails(data);
+      const customerName = String(data.customerName ?? details.fullName ?? this.session?.name ?? "");
+      const document = String(data.document ?? details.curp ?? details.rfc ?? "");
+
       await this.store.createRequest({
         userId: this.session.id,
         serviceId: service.id,
@@ -275,17 +277,59 @@ export class AppController {
     this.render();
   }
 
+  private async downloadRequestDocument(id: string): Promise<void> {
+    const request = this.store.snapshot.requests.find((item) => item.id === id);
+    try {
+      const blob = await this.store.downloadRequestDocument(id);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${request?.service?.code ?? "documento"}-${id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "No se pudo descargar el documento.");
+    }
+  }
+
   private findService(id: string): Service | undefined {
     return this.store.snapshot.services.find((service) => service.id === id);
   }
 
-  private extractDetails(data: FormPayload): Record<string, string> {
-    return Object.entries(data).reduce<Record<string, string>>((details, [key, value]) => {
+  private async extractDetails(data: FormPayload): Promise<Record<string, string>> {
+    const details: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(data)) {
       if (key.startsWith("details.")) {
-        details[key.replace("details.", "")] = String(value ?? "");
+        const detailKey = key.replace("details.", "");
+        if (value instanceof File) {
+          if (value.size === 0) continue;
+          if (!["image/jpeg", "image/png"].includes(value.type)) {
+            throw new Error("La foto debe ser JPG o PNG.");
+          }
+          if (value.size > 4 * 1024 * 1024) {
+            throw new Error("La foto no puede pesar mas de 4 MB.");
+          }
+          details[detailKey] = await this.fileToDataUrl(value);
+          details[`${detailKey}FileName`] = value.name;
+        } else {
+          details[detailKey] = String(value ?? "");
+        }
       }
-      return details;
-    }, {});
+    }
+
+    return details;
+  }
+
+  private fileToDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => resolve(String(reader.result ?? "")));
+      reader.addEventListener("error", () => reject(new Error("No se pudo leer el archivo.")));
+      reader.readAsDataURL(file);
+    });
   }
 
   private lines(value: FormDataEntryValue | undefined): string[] {

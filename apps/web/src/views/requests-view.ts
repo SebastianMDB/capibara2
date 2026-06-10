@@ -48,7 +48,7 @@ function requestRow(item: TramiteRequest, user: User): string {
 
 function requestAction(item: TramiteRequest, user: User): string {
   const download = item.service?.sampleFiles?.[0]
-    ? `<a class="ghost-button" href="${templateUrl(item.service.sampleFiles[0])}" download>Descargar documento</a>`
+    ? `<button class="ghost-button" data-action="download-request-document" data-id="${item.id}">Descargar documento</button>`
     : "";
 
   if (user.role !== "admin") {
@@ -64,8 +64,4 @@ function requestAction(item: TramiteRequest, user: User): string {
       </select>
     </div>
   `;
-}
-
-function templateUrl(file: string): string {
-  return `/templates/${file.split("/").map(encodeURIComponent).join("/")}`;
 }

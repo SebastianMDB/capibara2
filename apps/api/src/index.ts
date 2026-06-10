@@ -7,6 +7,7 @@ import { createReadStream } from "node:fs";
 import { access } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
 import { prisma, closeDb } from "./db.js";
+import { generateRequestPdf } from "./pdf-generator.js";
 import { createToken, requireAdmin, requireAuth } from "./security/auth.js";
 import { hashPassword, verifyPassword } from "./security/password.js";
 import { publicPaymentSettings, publicRequest, publicService, publicUser } from "./utils/serializers.js";
@@ -22,7 +23,7 @@ import {
   toPrismaServiceStatus
 } from "./validators.js";
 
-const app = Fastify({ logger: true });
+const app = Fastify({ logger: true, bodyLimit: 8 * 1024 * 1024 });
 const port = Number(process.env.PORT ?? process.env.API_PORT ?? 3000);
 
 await app.register(cors, {
@@ -188,6 +189,26 @@ app.patch("/requests/:id/status", async (request) => {
   });
 
   return publicRequest(updated);
+});
+
+app.get("/requests/:id/document", async (request, reply) => {
+  const auth = requireAuth(request);
+  const { id } = request.params as { id: string };
+  const tramiteRequest = await prisma.tramiteRequest.findUniqueOrThrow({
+    where: { id },
+    include: { service: true }
+  });
+
+  if (auth.role !== "ADMIN" && tramiteRequest.userId !== auth.id) {
+    return reply.code(403).send({ message: "No autorizado." });
+  }
+
+  const pdf = await generateRequestPdf(tramiteRequest);
+  const filename = `${tramiteRequest.service.code}-${tramiteRequest.id}.pdf`;
+  return reply
+    .type("application/pdf")
+    .header("Content-Disposition", `attachment; filename="${filename}"`)
+    .send(Buffer.from(pdf));
 });
 
 app.get("/payment-settings", async (request) => {

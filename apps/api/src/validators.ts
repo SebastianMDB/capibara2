@@ -15,10 +15,11 @@ export const createUserSchema = z.object({
 export const serviceFieldSchema = z.object({
   name: z.string().min(1),
   label: z.string().min(1),
-  type: z.enum(["text", "date", "number", "select", "textarea"]),
+  type: z.enum(["text", "date", "number", "select", "textarea", "file"]),
   required: z.boolean(),
   placeholder: z.string().optional(),
-  options: z.array(z.string()).optional()
+  options: z.array(z.string()).optional(),
+  accept: z.string().optional()
 });
 
 export const serviceSchema = z.object({

@@ -132,6 +132,10 @@ export class Store {
     await this.refresh();
   }
 
+  async downloadRequestDocument(id: string): Promise<Blob> {
+    return this.requestBlob(`/requests/${id}/document`);
+  }
+
   private async request<T>(
     path: string,
     options: { method?: string; body?: unknown; auth?: boolean } = {}
@@ -154,5 +158,19 @@ export class Store {
     }
 
     return response.json() as Promise<T>;
+  }
+
+  private async requestBlob(path: string): Promise<Blob> {
+    const headers = new Headers();
+    if (this.token) headers.set("Authorization", `Bearer ${this.token}`);
+
+    const response = await fetch(`${API_BASE_URL}${path}`, { headers });
+
+    if (!response.ok) {
+      const message = await response.json().then((body) => body.message as string).catch(() => "");
+      throw new Error(message || `Error HTTP ${response.status}`);
+    }
+
+    return response.blob();
   }
 }

@@ -16,7 +16,7 @@ export function modalView(
 
 function requestModal(service: Service, instructions: string, reference: string, sessionName: string): string {
   const total = service.cost + service.fee;
-  const fields = service.requiredFields.map((field) => fieldControl(field, sessionName)).join("");
+  const fields = requestFields(service).map((field) => fieldControl(field, sessionName)).join("");
 
   return `
     <div class="modal-backdrop">
@@ -125,9 +125,12 @@ function requestViewModal(request: TramiteRequest): string {
           <div><span>Total</span><strong>${money(request.total)}</strong></div>
         </div>
         <dl class="details-list">
-          ${Object.entries(request.details).map(([key, value]) => `<div><dt>${key}</dt><dd>${value}</dd></div>`).join("")}
+          ${Object.entries(request.details)
+            .filter(([key]) => !key.endsWith("FileName"))
+            .map(([key, value]) => detailRow(key, value, request.details))
+            .join("")}
         </dl>
-        ${request.service?.sampleFiles?.length ? `<div class="download-list">${templateLinks(request.service.sampleFiles, "Descargar documento")}</div>` : ""}
+        ${request.service?.sampleFiles?.length ? `<div class="download-list"><button class="ghost-button" data-action="download-request-document" data-id="${request.id}">Descargar documento</button></div>` : ""}
         <p class="muted" style="margin-top: 14px">${request.notes || "Sin notas adicionales."}</p>
       </section>
     </div>
@@ -137,6 +140,7 @@ function requestViewModal(request: TramiteRequest): string {
 function fieldControl(field: ServiceField, sessionName = ""): string {
   const required = field.required ? "required" : "";
   const placeholder = field.placeholder ? `placeholder="${field.placeholder}"` : "";
+  const accept = field.accept ? `accept="${field.accept}"` : "";
   const value = field.name === "fullName" && sessionName ? `value="${sessionName}"` : "";
 
   if (field.type === "select") {
@@ -155,6 +159,15 @@ function fieldControl(field: ServiceField, sessionName = ""): string {
       <div class="field">
         <label>${field.label}</label>
         <textarea name="details.${field.name}" rows="3" ${required} ${placeholder}></textarea>
+      </div>
+    `;
+  }
+
+  if (field.type === "file") {
+    return `
+      <div class="field">
+        <label>${field.label}</label>
+        <input name="details.${field.name}" type="file" ${required} ${accept}>
       </div>
     `;
   }
@@ -179,4 +192,31 @@ function templateLinks(files: string[], label: string): string {
 
 function templateUrl(file: string): string {
   return `/templates/${file.split("/").map(encodeURIComponent).join("/")}`;
+}
+
+function requestFields(service: Service): ServiceField[] {
+  if (service.code !== "antecedentes-chiapas") return service.requiredFields;
+  if (service.requiredFields.some((field) => field.name === "photo")) return service.requiredFields;
+
+  return [
+    ...service.requiredFields,
+    { name: "photo", label: "Foto del cliente", type: "file", required: true, accept: "image/png,image/jpeg" }
+  ];
+}
+
+function detailRow(key: string, value: string, details: Record<string, string>): string {
+  if (value.startsWith("data:image/")) {
+    const filename = details[`${key}FileName`] || "foto-cliente";
+    return `
+      <div>
+        <dt>${key}</dt>
+        <dd>
+          <img class="detail-image" src="${value}" alt="${filename}">
+          <a class="ghost-button" href="${value}" download="${filename}">Descargar foto</a>
+        </dd>
+      </div>
+    `;
+  }
+
+  return `<div><dt>${key}</dt><dd>${value}</dd></div>`;
 }

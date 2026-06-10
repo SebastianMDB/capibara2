@@ -35,6 +35,7 @@ export const seedState: AppState = {
       description: "Constancia emitida por el Poder Judicial con vigencia, folio, recibo oficial y validación QR.",
       requiredFields: [
         ...identityFields,
+        { name: "photo", label: "Foto del cliente", type: "file", required: true, accept: "image/png,image/jpeg" },
         { name: "office", label: "Oficina", type: "text", required: false, placeholder: "01" },
         { name: "receipt", label: "Recibo oficial", type: "text", required: false, placeholder: "Número de recibo" }
       ],
