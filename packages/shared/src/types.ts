@@ -48,6 +48,7 @@ export interface TramiteRequest {
   total: number;
   notes: string;
   details: Record<string, string>;
+  service?: Service;
 }
 
 export interface PaymentSettings {

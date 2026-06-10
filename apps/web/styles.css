@@ -258,6 +258,25 @@ h3 {
   font-size: 13px;
 }
 
+.template-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.template-links .ghost-button,
+a.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  text-decoration: none;
+}
+
+.download-list {
+  margin-top: 14px;
+}
+
 .details-list {
   display: grid;
   gap: 8px;

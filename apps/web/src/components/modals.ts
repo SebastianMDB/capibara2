@@ -16,6 +16,7 @@ export function modalView(
 
 function requestModal(service: Service, instructions: string, reference: string, sessionName: string): string {
   const total = service.cost + service.fee;
+  const fields = service.requiredFields.map((field) => fieldControl(field, sessionName)).join("");
 
   return `
     <div class="modal-backdrop">
@@ -28,13 +29,12 @@ function requestModal(service: Service, instructions: string, reference: string,
           <button class="icon-button" data-action="close-modal" aria-label="Cerrar">X</button>
         </div>
         <form class="form" data-action="create-request" data-id="${service.id}">
-          <div class="field"><label>Nombre completo</label><input name="customerName" value="${sessionName}" required></div>
-          <div class="field"><label>CURP o RFC</label><input name="document" placeholder="AAAA000000AAAAAA00" required></div>
           <div class="document-summary">
             <strong>${service.documentKind}</strong>
             <ul>${service.requirements.map((item) => `<li>${item}</li>`).join("")}</ul>
+            ${templateLinks(service.sampleFiles, "Descargar formato")}
           </div>
-          ${service.requiredFields.map(fieldControl).join("")}
+          ${fields}
           <div class="field"><label>Notas</label><textarea name="notes" rows="3" placeholder="Documentos, fecha deseada o comentarios"></textarea></div>
           <div class="totals">
             <div><span>Costo tramite</span><strong>${money(service.cost)}</strong></div>
@@ -127,15 +127,17 @@ function requestViewModal(request: TramiteRequest): string {
         <dl class="details-list">
           ${Object.entries(request.details).map(([key, value]) => `<div><dt>${key}</dt><dd>${value}</dd></div>`).join("")}
         </dl>
+        ${request.service?.sampleFiles?.length ? `<div class="download-list">${templateLinks(request.service.sampleFiles, "Descargar documento")}</div>` : ""}
         <p class="muted" style="margin-top: 14px">${request.notes || "Sin notas adicionales."}</p>
       </section>
     </div>
   `;
 }
 
-function fieldControl(field: ServiceField): string {
+function fieldControl(field: ServiceField, sessionName = ""): string {
   const required = field.required ? "required" : "";
   const placeholder = field.placeholder ? `placeholder="${field.placeholder}"` : "";
+  const value = field.name === "fullName" && sessionName ? `value="${sessionName}"` : "";
 
   if (field.type === "select") {
     return `
@@ -160,7 +162,21 @@ function fieldControl(field: ServiceField): string {
   return `
     <div class="field">
       <label>${field.label}</label>
-      <input name="details.${field.name}" type="${field.type}" ${required} ${placeholder}>
+      <input name="details.${field.name}" type="${field.type}" ${required} ${placeholder} ${value}>
     </div>
   `;
+}
+
+function templateLinks(files: string[], label: string): string {
+  if (!files.length) return "";
+
+  return `
+    <div class="template-links">
+      ${files.map((file) => `<a class="ghost-button" href="${templateUrl(file)}" download>${label}</a>`).join("")}
+    </div>
+  `;
+}
+
+function templateUrl(file: string): string {
+  return `/templates/${file.split("/").map(encodeURIComponent).join("/")}`;
 }

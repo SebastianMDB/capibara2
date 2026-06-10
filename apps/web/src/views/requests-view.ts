@@ -47,13 +47,25 @@ function requestRow(item: TramiteRequest, user: User): string {
 }
 
 function requestAction(item: TramiteRequest, user: User): string {
+  const download = item.service?.sampleFiles?.[0]
+    ? `<a class="ghost-button" href="${templateUrl(item.service.sampleFiles[0])}" download>Descargar documento</a>`
+    : "";
+
   if (user.role !== "admin") {
-    return `<button class="ghost-button" data-action="open-request-view" data-id="${item.id}">Ver</button>`;
+    return `<div class="actions"><button class="ghost-button" data-action="open-request-view" data-id="${item.id}">Ver</button>${download}</div>`;
   }
 
   return `
-    <select data-action="status" data-id="${item.id}">
-      ${statuses.map((status) => `<option ${item.status === status ? "selected" : ""}>${status}</option>`).join("")}
-    </select>
+    <div class="actions">
+      <button class="ghost-button" data-action="open-request-view" data-id="${item.id}">Ver</button>
+      ${download}
+      <select data-action="status" data-id="${item.id}">
+        ${statuses.map((status) => `<option ${item.status === status ? "selected" : ""}>${status}</option>`).join("")}
+      </select>
+    </div>
   `;
+}
+
+function templateUrl(file: string): string {
+  return `/templates/${file.split("/").map(encodeURIComponent).join("/")}`;
 }

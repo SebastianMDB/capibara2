@@ -180,13 +180,15 @@ export class AppController {
     const service = this.findService(serviceId);
     if (!service) return;
     const details = this.extractDetails(data);
+    const customerName = String(data.customerName ?? details.fullName ?? this.session.name);
+    const document = String(data.document ?? details.curp ?? details.rfc ?? "");
 
     try {
       await this.store.createRequest({
         userId: this.session.id,
         serviceId: service.id,
-        customerName: String(data.customerName ?? ""),
-        document: String(data.document ?? ""),
+        customerName,
+        document,
         state: details.state ?? "",
         notes: String(data.notes ?? ""),
         details
