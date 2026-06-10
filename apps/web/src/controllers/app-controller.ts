@@ -284,7 +284,7 @@ export class AppController {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${request?.service?.code ?? "documento"}-${id}.pdf`;
+      link.download = this.documentFilename(request, id);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -296,6 +296,21 @@ export class AppController {
 
   private findService(id: string): Service | undefined {
     return this.store.snapshot.services.find((service) => service.id === id);
+  }
+
+  private documentFilename(request: import("@paperandom/shared").TramiteRequest | undefined, id: string): string {
+    const service = this.slug(request?.service?.code ?? request?.serviceName ?? "documento");
+    const customer = this.slug(request?.customerName ?? "solicitante");
+    return `${service}-${customer}-${id}.pdf`;
+  }
+
+  private slug(value: string): string {
+    return value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase() || "documento";
   }
 
   private async extractDetails(data: FormPayload): Promise<Record<string, string>> {

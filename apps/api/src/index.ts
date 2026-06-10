@@ -204,7 +204,7 @@ app.get("/requests/:id/document", async (request, reply) => {
   }
 
   const pdf = await generateRequestPdf(tramiteRequest);
-  const filename = `${tramiteRequest.service.code}-${tramiteRequest.id}.pdf`;
+  const filename = documentFilename(tramiteRequest.service.code, tramiteRequest.customerName, tramiteRequest.id);
   return reply
     .type("application/pdf")
     .header("Content-Disposition", `attachment; filename="${filename}"`)
@@ -248,4 +248,17 @@ try {
 } catch (error) {
   app.log.error(error);
   process.exit(1);
+}
+
+function documentFilename(serviceCode: string, customerName: string, id: string): string {
+  return `${slug(serviceCode)}-${slug(customerName)}-${id}.pdf`;
+}
+
+function slug(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase() || "documento";
 }

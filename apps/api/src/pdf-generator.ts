@@ -61,6 +61,18 @@ async function drawByService(pdf: PDFDocument, page: PDFPage, font: PDFFont, bol
 
 function addRequestSummary(page: PDFPage, font: PDFFont, bold: PDFFont, request: RequestWithService): void {
   const { width } = page.getSize();
+  page.drawRectangle({
+    x: 24,
+    y: 24,
+    width: Math.min(260, width - 48),
+    height: 26,
+    color: rgb(1, 1, 1),
+    borderColor: rgb(0.15, 0.28, 0.42),
+    borderWidth: 0.7,
+    opacity: 0.96
+  });
+  drawText(page, `Solicitante: ${request.customerName}`, 34, 34, bold, 10);
+
   const details = requestDetails(request);
   const summary: PdfValue[] = [
     { label: "Nombre", value: request.customerName },

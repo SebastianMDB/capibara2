@@ -32,7 +32,6 @@ function requestModal(service: Service, instructions: string, reference: string,
           <div class="document-summary">
             <strong>${service.documentKind}</strong>
             <ul>${service.requirements.map((item) => `<li>${item}</li>`).join("")}</ul>
-            ${templateLinks(service.sampleFiles, "Descargar formato")}
           </div>
           ${fields}
           <div class="field"><label>Notas</label><textarea name="notes" rows="3" placeholder="Documentos, fecha deseada o comentarios"></textarea></div>
@@ -122,6 +121,7 @@ function requestViewModal(request: TramiteRequest): string {
         </div>
         <p><span class="status ${statusClass(request.status)}">${request.status}</span></p>
         <div class="totals">
+          <div><span>Solicitante</span><strong>${request.customerName}</strong></div>
           <div><span>Documento</span><strong>${request.document}</strong></div>
           <div><span>Estado</span><strong>${request.state}</strong></div>
           <div><span>Total</span><strong>${money(request.total)}</strong></div>

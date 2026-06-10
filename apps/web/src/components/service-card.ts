@@ -20,7 +20,7 @@ export function serviceCard(service: Service, user: User): string {
         </div>
         <div class="toolbar" style="margin-top: 12px">
           <button class="primary" data-action="open-request" data-id="${service.id}">Solicitar</button>
-          ${service.sampleFiles[0] ? `<a class="ghost-button" href="${templateUrl(service.sampleFiles[0])}" download>Formato PDF</a>` : ""}
+          ${user.role === "admin" && service.sampleFiles[0] ? `<a class="ghost-button" href="${templateUrl(service.sampleFiles[0])}" download>Formato PDF</a>` : ""}
           ${user.role === "admin" ? `<button class="ghost-button" data-action="edit-service" data-id="${service.id}">Editar</button>` : ""}
         </div>
       </div>
