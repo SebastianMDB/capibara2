@@ -20,7 +20,6 @@ export async function generateRequestPdf(request: RequestWithService): Promise<U
   const page = pdf.getPage(0);
 
   await drawByServiceV2(pdf, page, font, bold, request);
-  addRequestSummary(page, font, bold, request);
 
   return pdf.save();
 }
@@ -30,15 +29,28 @@ async function drawByServiceV2(pdf: PDFDocument, page: PDFPage, font: PDFFont, b
   const fullName = fullCustomerName(request, values);
 
   if (request.service.code === "antecedentes-chiapas") {
-    drawText(page, fullName, 195, 456, bold, 11);
-    drawText(page, request.document, 390, 428, font, 9);
-    drawText(page, values.birthDate, 130, 428, font, 9);
-    drawText(page, request.state || values.state, 130, 384, font, 10);
-    drawText(page, values.office, 420, 384, font, 10);
-    drawText(page, values.voterKey, 130, 356, font, 8);
+    clearAreas(page, [
+      [80, 498, 58, 82],
+      [190, 452, 230, 18],
+      [126, 424, 100, 14],
+      [386, 424, 150, 14],
+      [126, 380, 104, 14],
+      [416, 380, 44, 14],
+      [126, 350, 310, 14],
+      [126, 322, 320, 30],
+      [162, 151, 108, 14],
+      [72, 50, 220, 16]
+    ]);
+    drawFittedText(page, fullName, 195, 456, 230, bold, 11);
+    drawFittedText(page, request.document || values.curp, 390, 428, 145, font, 9);
+    drawFittedText(page, values.birthDate, 130, 428, 95, font, 9);
+    drawFittedText(page, request.state || values.state, 130, 384, 96, font, 10);
+    drawFittedText(page, values.office, 420, 384, 34, font, 10);
+    drawFittedText(page, values.voterKey, 130, 356, 290, font, 8);
     drawWrappedText(page, values.address, 130, 332, 300, font, 8, 10, 3);
-    drawText(page, values.receipt, 165, 156, font, 9);
-    await drawImage(page, pdf, values.photo, 455, 500, 82, 102);
+    drawFittedText(page, values.receipt, 165, 156, 100, font, 9);
+    drawFittedText(page, `Solicitante: ${fullName}`, 78, 55, 205, bold, 8);
+    await drawImage(page, pdf, values.photo, 82, 500, 56, 78);
     return;
   }
 
@@ -59,14 +71,46 @@ async function drawByServiceV2(pdf: PDFDocument, page: PDFPage, font: PDFFont, b
   }
 
   if (isEducationService(request.service)) {
-    drawText(page, fullName, 156, 492, bold, 11);
-    drawText(page, request.document, 156, 468, font, 9);
-    drawText(page, request.state || values.state, 156, 444, font, 9);
-    drawText(page, values.institution, 156, 420, font, 9);
-    drawText(page, values.cct, 156, 396, font, 9);
-    drawText(page, values.average, 402, 396, bold, 10);
-    drawText(page, values.period || dateRange(values.startDate, values.endDate), 156, 372, font, 9);
-    drawText(page, values.level, 402, 372, font, 9);
+    const period = values.period || dateRange(values.startDate, values.endDate);
+    if (request.service.code === "secundaria-inea") {
+      clearAreas(page, [
+        [48, 485, 520, 42],
+        [48, 442, 520, 40],
+        [48, 396, 520, 42],
+        [150, 359, 120, 16],
+        [390, 359, 90, 16],
+        [48, 20, 250, 18]
+      ]);
+      drawCenteredFittedText(page, fullName, 48, 497, 520, bold, 10);
+      drawCenteredFittedText(page, request.document || values.curp, 48, 473, 520, font, 8);
+      drawCenteredFittedText(page, request.state || values.state, 48, 449, 520, font, 8);
+      drawCenteredFittedText(page, values.institution, 48, 425, 520, font, 8);
+      drawFittedText(page, values.cct, 156, 396, 120, font, 8);
+      drawCenteredFittedText(page, values.average, 386, 396, 90, bold, 9);
+      drawCenteredFittedText(page, period, 48, 372, 520, font, 8);
+      drawCenteredFittedText(page, values.level || "Secundaria", 386, 372, 90, font, 8);
+      drawFittedText(page, `Solicitante: ${fullName}`, 54, 25, 220, bold, 8);
+      return;
+    }
+
+    clearAreas(page, [
+      [146, 486, 320, 18],
+      [146, 462, 320, 18],
+      [146, 438, 320, 18],
+      [146, 414, 320, 18],
+      [146, 390, 165, 18],
+      [396, 390, 80, 18],
+      [146, 366, 165, 18],
+      [396, 366, 100, 18]
+    ]);
+    drawFittedText(page, fullName, 156, 492, 300, bold, 11);
+    drawFittedText(page, request.document || values.curp, 156, 468, 300, font, 9);
+    drawFittedText(page, request.state || values.state, 156, 444, 300, font, 9);
+    drawFittedText(page, values.institution, 156, 420, 300, font, 9);
+    drawFittedText(page, values.cct, 156, 396, 150, font, 9);
+    drawCenteredFittedText(page, values.average, 386, 396, 90, bold, 10);
+    drawFittedText(page, period, 156, 372, 150, font, 9);
+    drawFittedText(page, values.level, 402, 372, 90, font, 9);
   }
 }
 
@@ -187,6 +231,34 @@ function drawText(page: PDFPage, text: string | undefined, x: number, y: number,
   page.drawText(clean(text), { x, y, size, font, color: rgb(0.02, 0.1, 0.18) });
 }
 
+function drawFittedText(page: PDFPage, text: string | undefined, x: number, y: number, maxWidth: number, font: PDFFont, size: number): void {
+  if (!text) return;
+  drawText(page, fittedValue(text, maxWidth, font, size), x, y, font, size);
+}
+
+function drawCenteredFittedText(
+  page: PDFPage,
+  text: string | undefined,
+  x: number,
+  y: number,
+  width: number,
+  font: PDFFont,
+  size: number
+): void {
+  if (!text) return;
+  const value = fittedValue(text, width, font, size);
+  const textWidth = font.widthOfTextAtSize(value, size);
+  drawText(page, value, x + Math.max(0, (width - textWidth) / 2), y, font, size);
+}
+
+function fittedValue(text: string, maxWidth: number, font: PDFFont, size: number): string {
+  let fitted = clean(text);
+  while (fitted.length > 1 && font.widthOfTextAtSize(fitted, size) > maxWidth) {
+    fitted = `${fitted.slice(0, -2).trimEnd()}...`;
+  }
+  return fitted;
+}
+
 function drawWrappedText(
   page: PDFPage,
   text: string | undefined,
@@ -219,6 +291,19 @@ function drawWrappedText(
 
 function clean(value: string): string {
   return value.replace(/\s+/g, " ").trim();
+}
+
+function clearAreas(page: PDFPage, areas: Array<[number, number, number, number]>): void {
+  for (const [x, y, width, height] of areas) {
+    page.drawRectangle({
+      x,
+      y,
+      width,
+      height,
+      color: rgb(1, 1, 1),
+      opacity: 0.92
+    });
+  }
 }
 
 async function resolveTemplatePath(template: string): Promise<string> {
