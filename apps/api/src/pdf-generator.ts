@@ -65,19 +65,19 @@ async function drawAntecedentesData(
   fullName: string
 ): Promise<void> {
   drawFittedText(page, values.clave || values.folio, 487, 642, 92, fonts.bold, 9);
-  drawFittedText(page, values.office, 500, 574, 48, fonts.regular, 6);
-  await drawImage(page, pdf, values.photo, 98, 500, 56, 74);
-  await drawImage(page, pdf, values.fingerprint || values.fingerprintImage || values.huella, 73, 326, 56, 74);
+  drawFittedText(page, values.office, 501, 573, 48, fonts.regular, 5.6);
+  await drawImage(page, pdf, values.photo, 98, 502, 58, 88);
+  await drawImage(page, pdf, values.fingerprint || values.fingerprintImage || values.huella, 72, 332, 58, 92);
 
-  drawWrappedText(page, values.secretaryText, 156, 565, 300, fonts.regular, 6, 7, 2);
-  drawFittedText(page, values.searchDate || values.issueDate, 252, 436, 90, fonts.bold, 6);
-  drawFittedText(page, request.document || values.curp, 314, 422, 132, fonts.bold, 6);
-  drawFittedText(page, fullName, 176, 402, 160, fonts.bold, 6);
-  drawFittedText(page, values.birthDate, 171, 379, 74, fonts.regular, 6);
-  drawFittedText(page, values.office, 463, 399, 42, fonts.bold, 6);
-  drawWrappedText(page, values.address, 167, 347, 326, fonts.regular, 6, 7, 3);
-  drawFittedText(page, values.receipt, 186, 158, 170, fonts.bold, 7);
-  drawFittedText(page, values.validUntil, 242, 85, 120, fonts.bold, 7);
+  drawWrappedText(page, values.secretaryText, 154, 571, 300, fonts.regular, 5.8, 6.8, 2);
+  drawFittedText(page, values.searchDate || values.issueDate, 252, 438, 90, fonts.bold, 5.8);
+  drawFittedText(page, request.document || values.curp, 315, 424, 132, fonts.bold, 5.8);
+  drawFittedText(page, fullName, 176, 404, 160, fonts.bold, 5.8);
+  drawFittedText(page, values.birthDate, 171, 381, 74, fonts.regular, 5.8);
+  drawFittedText(page, values.office, 463, 401, 42, fonts.bold, 5.8);
+  drawWrappedText(page, values.address, 167, 349, 326, fonts.regular, 5.8, 6.8, 3);
+  drawFittedText(page, values.receipt, 186, 160, 170, fonts.bold, 6.6);
+  drawFittedText(page, values.validUntil, 242, 87, 120, fonts.bold, 6.6);
 }
 
 function drawEducationData(
@@ -88,25 +88,46 @@ function drawEducationData(
   fullName: string
 ): void {
   const period = values.period || dateRange(values.startDate, values.endDate);
-  drawCenteredFittedText(page, fullName, 92, 502, 134, fonts.bold, 6);
-  drawCenteredFittedText(page, values.firstLastName || values.paternalLastName, 256, 502, 118, fonts.bold, 6);
-  drawCenteredFittedText(page, values.secondLastName || values.maternalLastName, 406, 502, 90, fonts.bold, 6);
-  drawCenteredFittedText(page, request.document || values.curp, 248, 460, 118, fonts.bold, 6);
+  const nameParts = splitName(fullName, values);
 
-  drawCenteredFittedText(page, values.institution, 98, 422, 140, fonts.bold, 6);
-  drawCenteredFittedText(page, request.state || values.state, 282, 422, 92, fonts.bold, 6);
-  drawCenteredFittedText(page, values.level, 434, 422, 80, fonts.bold, 6);
-  drawCenteredFittedText(page, period, 150, 382, 120, fonts.bold, 6);
-  drawCenteredFittedText(page, values.cct, 86, 344, 120, fonts.regular, 7);
-  drawCenteredFittedText(page, values.average, 420, 344, 78, fonts.regular, 7);
+  drawCenteredFittedText(page, nameParts.names, 88, 512, 140, fonts.bold, 5.6);
+  drawCenteredFittedText(page, nameParts.paternalLastName, 248, 512, 118, fonts.bold, 5.6);
+  drawCenteredFittedText(page, nameParts.maternalLastName, 400, 512, 96, fonts.bold, 5.6);
+  drawCenteredFittedText(page, request.document || values.curp, 250, 462, 124, fonts.bold, 5.8);
 
-  drawCenteredFittedText(page, values.issuePlace, 268, 266, 150, fonts.regular, 6);
-  drawCenteredFittedText(page, values.issueDate, 268, 222, 120, fonts.regular, 6);
-  drawFittedText(page, values.authority, 70, 204, 468, fonts.bold, 5);
-  drawWrappedText(page, values.digitalSeal, 70, 188, 468, fonts.regular, 4.5, 5, 4);
-  drawWrappedText(page, values.sepSeal, 70, 148, 468, fonts.regular, 4.5, 5, 4);
-  drawFittedText(page, values.signer || values.responsibleName, 70, 67, 140, fonts.bold, 5);
-  drawFittedText(page, values.folio, 68, 40, 230, fonts.bold, 6);
+  drawCenteredFittedText(page, values.institution, 108, 432, 138, fonts.bold, 5.8);
+  drawCenteredFittedText(page, request.state || values.state, 282, 432, 96, fonts.bold, 5.8);
+  drawCenteredFittedText(page, values.level, 434, 432, 84, fonts.bold, 5.8);
+  drawCenteredFittedText(page, period, 150, 389, 122, fonts.bold, 5.8);
+  drawCenteredFittedText(page, values.cct, 92, 350, 126, fonts.regular, 6.4);
+  drawCenteredFittedText(page, values.average, 420, 350, 82, fonts.regular, 6.4);
+
+  drawCenteredFittedText(page, values.issuePlace, 270, 277, 156, fonts.regular, 5.6);
+  drawCenteredFittedText(page, values.issueDate, 270, 237, 126, fonts.regular, 5.6);
+  drawFittedText(page, values.authority, 70, 213, 468, fonts.bold, 4.6);
+  drawWrappedText(page, values.digitalSeal, 70, 198, 468, fonts.regular, 4.2, 4.8, 4);
+  drawWrappedText(page, values.sepSeal, 70, 159, 468, fonts.regular, 4.2, 4.8, 4);
+  drawFittedText(page, values.signer || values.responsibleName, 70, 78, 140, fonts.bold, 4.8);
+  drawFittedText(page, values.folio, 68, 42, 230, fonts.bold, 5.8);
+}
+
+function splitName(fullName: string, values: Record<string, string>): { names: string; paternalLastName: string; maternalLastName: string } {
+  if (values.firstName || values.paternalLastName || values.maternalLastName) {
+    return {
+      names: values.firstName || values.fullName || fullName,
+      paternalLastName: values.paternalLastName || values.firstLastName || "",
+      maternalLastName: values.maternalLastName || values.secondLastName || ""
+    };
+  }
+
+  const parts = fullName.split(/\s+/).filter(Boolean);
+  if (parts.length <= 2) return { names: fullName, paternalLastName: "", maternalLastName: "" };
+
+  return {
+    names: parts.slice(0, -2).join(" "),
+    paternalLastName: parts.at(-2) ?? "",
+    maternalLastName: parts.at(-1) ?? ""
+  };
 }
 
 function requestValues(request: RequestWithService): Record<string, string> {
