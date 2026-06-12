@@ -113,7 +113,10 @@ app.post("/users", async (request, reply) => {
 });
 
 app.get("/services", async () => {
-  const services = await prisma.service.findMany({ orderBy: { createdAt: "desc" } });
+  const services = await prisma.service.findMany({
+    where: { status: "ACTIVO" },
+    orderBy: { createdAt: "desc" }
+  });
   return services.map(publicService);
 });
 

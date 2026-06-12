@@ -54,6 +54,11 @@ async function main(): Promise<void> {
     });
   }
 
+  await prisma.service.updateMany({
+    where: { code: { notIn: seedState.services.map((service) => service.code) } },
+    data: { status: "INACTIVO" }
+  });
+
   await prisma.paymentSettings.upsert({
     where: { id: "default" },
     create: { id: "default", ...seedState.qr },

@@ -65,7 +65,7 @@ export const seedState: AppState = {
         { name: "folio", label: "Folio", type: "text", required: false, placeholder: "Folio digital si ya existe" }
       ],
       requirements: ["CURP", "Nombre completo", "Entidad", "Datos de escuela o unidad INEA"],
-      sampleFiles: ["DOC-20260514-WA0069.pdf"]
+      sampleFiles: ["4.pdf"]
     }),
     service({
       id: "s-bachillerato-tecnologico",
@@ -85,7 +85,7 @@ export const seedState: AppState = {
         { name: "credits", label: "Créditos", type: "number", required: false, placeholder: "360" }
       ],
       requirements: ["CURP", "Matrícula", "Institución", "Carrera técnica", "Promedio"],
-      sampleFiles: ["DGTI TECNOLOGICO-PIGC000302HMNXNSA2.pdf"]
+      sampleFiles: ["DGTI TECNOLOGICO-GAOJ981116HNLRRN06.pdf"]
     }),
     service({
       id: "s-prepa-linea-sep",
@@ -105,7 +105,7 @@ export const seedState: AppState = {
         { name: "modules", label: "Módulos acreditados", type: "textarea", required: false, placeholder: "Lista de módulos o comentarios" }
       ],
       requirements: ["CURP", "Matrícula", "Promedio", "Periodo cursado", "Créditos acreditados"],
-      sampleFiles: ["PREPARATORIA ABIERTA BLANCO-PIGC000302HMNXNSA2.pdf"]
+      sampleFiles: ["PREPARATORIA ABIERTA BLANCO-GAOJ981116HNLRRN06.pdf"]
     }),
     service({
       id: "s-preparatoria-abierta",
@@ -125,7 +125,7 @@ export const seedState: AppState = {
         { name: "printPlace", label: "Lugar de impresión", type: "text", required: false, placeholder: "Benito Juárez, Ciudad de México" }
       ],
       requirements: ["CURP", "Promedio", "Periodo cursado", "Clave de centro de trabajo"],
-      sampleFiles: ["PREPARATORIA ABIERTA VERDE-PIGC000302HMNXNSA2.pdf"]
+      sampleFiles: ["PREPARATORIA ABIERTA VERDE-GAOJ981116HNLRRN06.pdf"]
     }),
     service({
       id: "s-receta-imss",
@@ -150,25 +150,7 @@ export const seedState: AppState = {
         { name: "medicines", label: "Medicamentos", type: "textarea", required: true, placeholder: "Medicamento, dosis, frecuencia y duración" }
       ],
       requirements: ["NSS", "CURP", "Datos de clínica", "Diagnóstico", "Medicamentos indicados"],
-      sampleFiles: ["Receta - SANDRA GUADALUPE VAZQUEZ CHÁVEZ (2).pdf"]
-    }),
-    service({
-      id: "s-firma-digital",
-      name: "Validación de Documento Firmado",
-      code: "validacion-firma",
-      category: "Certificación",
-      documentKind: "Documento con firma digital",
-      cost: 45,
-      fee: 10,
-      description: "Registro y control de documentos firmados digitalmente por servidor público con huella y lugar de emisión.",
-      requiredFields: [
-        { name: "issuer", label: "Firmante", type: "text", required: true, placeholder: "Nombre del servidor público" },
-        { name: "issueDate", label: "Fecha de firma", type: "date", required: true },
-        { name: "place", label: "Lugar", type: "text", required: true, placeholder: "Ciudad de México" },
-        { name: "fingerprint", label: "Huella digital", type: "textarea", required: false, placeholder: "Fragmento o cadena de huella" }
-      ],
-      requirements: ["Documento PDF", "Datos de firma", "Huella digital si está disponible"],
-      sampleFiles: ["CDAPF-2026-260876 (2).pdf"]
+      sampleFiles: ["Receta - CARLOS.pdf"]
     })
   ],
   requests: [
