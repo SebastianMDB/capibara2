@@ -1,16 +1,16 @@
 :root {
-  --bg: #111827;
-  --panel: #18233a;
-  --panel-2: #22304f;
+  --bg: #07152b;
+  --panel: #0f2547;
+  --panel-2: #173765;
   --line: rgba(255, 255, 255, 0.12);
   --text: #f8fafc;
-  --muted: #aeb9cf;
-  --accent: #22d3ee;
-  --accent-2: #f59e0b;
+  --muted: #b8c7de;
+  --accent: #3b82f6;
+  --accent-2: #60a5fa;
   --ok: #34d399;
   --danger: #fb7185;
-  --violet: #a78bfa;
-  --shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+  --violet: #93c5fd;
+  --shadow: 0 18px 42px rgba(3, 12, 28, 0.42);
 }
 
 * {
@@ -21,8 +21,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 14% 20%, rgba(34, 211, 238, 0.18), transparent 30%),
-    linear-gradient(135deg, #0f172a 0%, #1f2937 48%, #26324d 100%);
+    radial-gradient(circle at 14% 20%, rgba(59, 130, 246, 0.2), transparent 30%),
+    linear-gradient(135deg, #061326 0%, #0b1f3f 48%, #123b6d 100%);
   color: var(--text);
   font-family: Inter, "Segoe UI", Arial, sans-serif;
   letter-spacing: 0;
@@ -47,7 +47,7 @@ button {
 
 .sidebar {
   border-right: 1px solid var(--line);
-  background: rgba(8, 13, 26, 0.58);
+  background: rgba(5, 18, 39, 0.66);
   padding: 22px 18px;
   backdrop-filter: blur(16px);
 }
@@ -65,8 +65,8 @@ button {
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #22d3ee, #f59e0b);
-  color: #0f172a;
+  background: linear-gradient(135deg, #60a5fa, #1d4ed8);
+  color: #eff6ff;
   font-weight: 900;
 }
 
@@ -157,7 +157,7 @@ h3 {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(15, 23, 42, 0.78);
+  background: rgba(7, 21, 43, 0.82);
   color: var(--text);
   padding: 11px 12px;
   outline: none;
@@ -173,7 +173,7 @@ h3 {
   border: 0;
   border-radius: 8px;
   padding: 11px 15px;
-  color: #0f172a;
+  color: #eff6ff;
   font-weight: 800;
 }
 
@@ -182,7 +182,8 @@ h3 {
 }
 
 .secondary {
-  background: #e2e8f0;
+  background: #dbeafe;
+  color: #0f2547;
 }
 
 .danger {
@@ -209,8 +210,8 @@ h3 {
   min-height: 160px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(34, 48, 79, 0.96), rgba(24, 35, 58, 0.96));
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  background: linear-gradient(180deg, rgba(23, 55, 101, 0.96), rgba(15, 37, 71, 0.96));
+  box-shadow: 0 8px 24px rgba(3, 12, 28, 0.26);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -223,7 +224,7 @@ h3 {
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: rgba(34, 211, 238, 0.16);
+  background: rgba(96, 165, 250, 0.16);
   color: var(--accent);
   font-weight: 900;
 }
@@ -248,7 +249,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
-  background: rgba(34, 211, 238, 0.08);
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .document-summary ul {
@@ -324,8 +325,8 @@ a.ghost-button {
 }
 
 .tag {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  background: rgba(96, 165, 250, 0.16);
+  color: #bfdbfe;
 }
 
 .status.pendiente {
@@ -334,8 +335,8 @@ a.ghost-button {
 }
 
 .status.en-proceso {
-  background: rgba(34, 211, 238, 0.17);
-  color: #67e8f9;
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
 }
 
 .status.completado {
@@ -361,14 +362,14 @@ a.ghost-button {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 18px;
-  background: rgba(34, 48, 79, 0.86);
+  background: rgba(23, 55, 101, 0.86);
 }
 
 .table-wrap {
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(18, 27, 46, 0.76);
+  background: rgba(10, 30, 60, 0.78);
 }
 
 table {
@@ -407,9 +408,9 @@ th {
 .login-card,
 .modal-card {
   width: min(100%, 430px);
-  border: 1px solid rgba(34, 211, 238, 0.36);
+  border: 1px solid rgba(96, 165, 250, 0.4);
   border-radius: 8px;
-  background: rgba(17, 24, 39, 0.9);
+  background: rgba(7, 21, 43, 0.92);
   box-shadow: var(--shadow);
   padding: 26px;
 }
@@ -444,7 +445,7 @@ th {
   display: grid;
   place-items: center;
   padding: 18px;
-  background: rgba(2, 6, 23, 0.72);
+  background: rgba(3, 12, 28, 0.74);
   backdrop-filter: blur(10px);
   z-index: 10;
 }
